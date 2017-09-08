@@ -6,25 +6,42 @@
 
 ### Create initial business logic file based off name of object
 
+## Things to install Globally on personal machine
+```
+npm install -g karma-cli
+```
+
+```
+$ npm install bower -g
+```
+
+```
+sudo npm install gulp -g
+```
+
 ### Initialize npm & bower in root project directory
 
 ```
    npm init
 ```
-
-```
-   bower init
-```
-
 ### Create name of project when prompted by npm. Don't use spaces.
 
 ```
   project-name
 ```
 
+```
+   bower init
+```
+
 ### Install all dev dependencies
 ```
-npm i -D gulp browserify vinyl-source-stream gulp-concat gulp-uglify gulp-util del jshint gulp-jshint bower-files browser-sync jasmine karma karma-jasmine jasmine-core karma-chrome-launcher karma-cli karma-browserify karma-jquery karma-jasmine-html-reporter watchify
+npm i -D gulp browserify vinyl-source-stream gulp-concat gulp-uglify gulp-util del jshint gulp-jshint bower-files browser-sync jasmine karma karma-jasmine jasmine-core karma-chrome-launcher karma-cli karma-browserify karma-jquery karma-jasmine-html-reporter watchify babelify babel-preset-es2015
+```
+
+### Install jasmine
+```
+$ npm install jasmine --save-dev
 ```
 
 ### Initialize karma
@@ -32,12 +49,17 @@ npm i -D gulp browserify vinyl-source-stream gulp-concat gulp-uglify gulp-util d
 karma init
 ```
 
+### Initialize jasmine
+
+```
+$ ./node_modules/.bin/jasmine init
+```
+
 ### Install all prod dependencies
 
 ```
 bower i -S jquery bootstrap moment
 ```
-
 
 ### Create `gulpfile.js` in top-level of root directory and add the code below
 
@@ -64,6 +86,7 @@ var lib = require('bower-files')({
 });
 
 var buildProduction = utilities.env.production;
+var babelify = require("babelify");
 
 gulp.task('concatInterface', function(){
 return gulp.src(['./js/*-interface.js'])
@@ -72,10 +95,13 @@ return gulp.src(['./js/*-interface.js'])
 });
 
 gulp.task('jsBrowserify', ['concatInterface'], function() {
-return browserify({ entries: ['./tmp/allConcat.js'] })
-  .bundle()
-  .pipe(source('app.js'))
-  .pipe(gulp.dest('./build/js'));
+  return browserify({ entries: ['./tmp/allConcat.js']})
+    .transform(babelify.configure({
+      presets: ["es2015"]
+    }))
+    .bundle()
+    .pipe(source('app.js'))
+    .pipe(gulp.dest('./build/js'))
 });
 
 gulp.task("minifyScripts", ["jsBrowserify"], function(){
@@ -149,7 +175,7 @@ gulp.task('bowerBuild', ['bower'], function(){
 });
 
 ```
-### Populate karma-config.js
+### Populate karma.conf.js
 
 ```
 module.exports = function(config) {
@@ -173,6 +199,10 @@ module.exports = function(config) {
       'karma-chrome-launcher',
       'karma-jasmine-html-reporter'
     ],
+    browserify: {
+       debug: true,
+       transform: [ [ 'babelify', {presets: ["es2015"]} ] ]
+     },
 
     reporters: ['progress', 'kjhtml'],
     port: 9876,
@@ -184,6 +214,26 @@ module.exports = function(config) {
     concurrency: Infinity
   })
 }
+```
+
+### Edit `package.json` file
+```
+"scripts": {
+  "test": "jasmine"
+}
+```
+or
+
+```
+"scripts": {
+  "test": "karma start karma.conf.js"
+}
+```
+
+### Create .jshintrc in the root directory
+
+```
+{ "esversion":6 }
 ```
 
 ### Create a constructor in business logic and corresponding prototype methods
@@ -239,19 +289,7 @@ module.exports = function(config) {
 ./node_modules/.bin/jasmine init
 ```
 
-### Edit `package.json` file
-```
-"scripts": {
-  "test": "jasmine"
-}
-```
-or
 
-```
-"scripts": {
-  "test": "karma start karma.conf.js"
-}
-```
 
 
 ### Run `npm` test
@@ -284,17 +322,4 @@ npm install
 ```
 ```
 bower install
-```
-
-## Things to install Globally on personal machine
-```
-npm install -g karma-cli
-```
-
-```
-$ npm install bower -g
-```
-
-```
-sudo npm install gulp -g
 ```
