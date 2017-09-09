@@ -307,10 +307,10 @@ npm test
 ```
 
 
-### Run `jslint` in terminal to check for errors
+### Run `jshint` in terminal to check for errors
 
 ```
-  gulp jslint
+  gulp jshint
 ```
 
 ## When cloning a project that uses `npm` and `bower/webpack`
