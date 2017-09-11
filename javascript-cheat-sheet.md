@@ -5,6 +5,33 @@
 ### Create root directory
 
 ### Create initial business logic file based off name of object
+> For epicodus first install dependencies
+```
+npm install -g karma-cli
+```
+```
+$ npm install bower -g
+```
+```
+$ npm install jasmine --save-dev
+```
+```
+bower i -S jquery bootstrap moment
+```
+then initialize each packages
+
+```
+  $ npm init
+```
+```
+  $ bower init
+```
+```
+  $ karma init
+```
+```
+$ ./node_modules/.bin/jasmine init
+```
 
 ## Things to install Globally on personal machine
 ```
